@@ -23,7 +23,8 @@ const ProductListScreen: React.FC<ProductListScreenProps> = observer(({ viewMode
 
     useEffect(() => {
         viewModel.loadProducts();
-    }, []);    const handleProductPress = (product: Product) => {
+    }, []);    
+        const handleProductPress = (product: Product) => {
         navigation.navigate('ProductDetail', { productId: product.id });
     };
 
@@ -36,7 +37,8 @@ const ProductListScreen: React.FC<ProductListScreenProps> = observer(({ viewMode
     }
 
     return (
-        <View style={styles.container}>            <FlatList
+        <View style={styles.container}>            
+            <FlatList
                 data={viewModel.products}
                 renderItem={({ item }) => (
                     <ProductListItem

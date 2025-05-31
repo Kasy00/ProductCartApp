@@ -1,15 +1,17 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { observer } from 'mobx-react-lite';
 import { ProductDetailViewModel } from '../../viewmodels/ProductViewModel';
+import { CartViewModel } from '../../viewmodels/CartViewModel';
 import { RouteProp } from '@react-navigation/native';
 
 interface ProductDetailScreenProps {
     viewModel: ProductDetailViewModel;
+    cartViewModel: CartViewModel;
     route: RouteProp<{ ProductDetail: { productId: string } }, 'ProductDetail'>;
 }
 
-const ProductDetailScreen: React.FC<ProductDetailScreenProps> = observer(({ viewModel, route }) => {
+const ProductDetailScreen: React.FC<ProductDetailScreenProps> = observer(({ viewModel, cartViewModel, route }) => {
     const { productId } = route.params;
 
     useEffect(() => {
@@ -26,15 +28,23 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = observer(({ view
 
     if (!viewModel.product) {
         return <Text style={styles.errorText}>Product not found</Text>;
-    }
-
-    return (
+    }    return (
         <ScrollView style={styles.container}>
             <View style={styles.content}>
                 <Text style={styles.name}>{viewModel.product.name}</Text>
                 <Text style={styles.price}>${viewModel.product.price.toFixed(2)}</Text>
                 <Text style={styles.quantity}>Available: {viewModel.product.quantity}</Text>
-                <Text style={styles.description}>{viewModel.product.description}</Text>
+                <Text style={styles.description}>{viewModel.product.description}</Text>                
+                <TouchableOpacity 
+                    style={styles.addToCartButton}
+                    onPress={() => {
+                        if (viewModel.product) {
+                            cartViewModel.addToCart(viewModel.product.id, 1);
+                        }
+                    }}
+                >
+                    <Text style={styles.addToCartButtonText}>Add to Cart</Text>
+                </TouchableOpacity>
             </View>
         </ScrollView>
     );
@@ -67,6 +77,19 @@ const styles = StyleSheet.create({
         fontSize: 16,
         lineHeight: 24,
         color: '#333',
+        marginBottom: 24,
+    },
+    addToCartButton: {
+        backgroundColor: '#2e7d32',
+        padding: 16,
+        borderRadius: 8,
+        alignItems: 'center',
+        marginTop: 16,
+    },
+    addToCartButtonText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: 'bold',
     },
     loadingText: {
         textAlign: 'center',
