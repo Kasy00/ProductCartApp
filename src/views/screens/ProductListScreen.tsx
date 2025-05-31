@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { View, Text, FlatList } from 'react-native';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { observer } from 'mobx-react-lite';
 import { ProductListViewModel } from '../../viewmodels/ProductViewModel';
-import { ProductListItem, styles } from '../components/ProductListItem';
+import { ProductListItem } from '../components/ProductListItem';
 import { Product } from '../../models/Product';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -24,20 +24,21 @@ const ProductListScreen: React.FC<ProductListScreenProps> = observer(({ viewMode
     useEffect(() => {
         viewModel.loadProducts();
     }, []);    
-        const handleProductPress = (product: Product) => {
+
+    const handleProductPress = (product: Product) => {
         navigation.navigate('ProductDetail', { productId: product.id });
     };
 
     if (viewModel.isLoading) {
-        return <Text style={styles.loadingText}>Loading products...</Text>;
+        return <Text style={localStyles.loadingText}>Loading products...</Text>;
     }
 
     if (viewModel.error) {
-        return <Text style={styles.errorText}>{viewModel.error}</Text>;
+        return <Text style={localStyles.errorText}>{viewModel.error}</Text>;
     }
 
     return (
-        <View style={styles.container}>            
+        <View style={localStyles.container}>            
             <FlatList
                 data={viewModel.products}
                 renderItem={({ item }) => (
@@ -48,9 +49,34 @@ const ProductListScreen: React.FC<ProductListScreenProps> = observer(({ viewMode
                     />
                 )}
                 keyExtractor={item => item.id.toString()}
+                contentContainerStyle={localStyles.listContent}
+                showsVerticalScrollIndicator={false}
             />
         </View>
     );
+});
+
+const localStyles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#f8f9fa',
+    },
+    listContent: {
+        paddingVertical: 8,
+        paddingHorizontal: 8,
+    },
+    loadingText: {
+        textAlign: 'center',
+        padding: 16,
+        fontSize: 16,
+        color: '#666',
+    },
+    errorText: {
+        textAlign: 'center',
+        padding: 16,
+        fontSize: 16,
+        color: '#d32f2f',
+    },
 });
 
 export default ProductListScreen;

@@ -2,16 +2,14 @@ import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { observer } from 'mobx-react-lite';
 import { ProductDetailViewModel } from '../../viewmodels/ProductViewModel';
-import { CartViewModel } from '../../viewmodels/CartViewModel';
 import { RouteProp } from '@react-navigation/native';
 
 interface ProductDetailScreenProps {
     viewModel: ProductDetailViewModel;
-    cartViewModel: CartViewModel;
     route: RouteProp<{ ProductDetail: { productId: string } }, 'ProductDetail'>;
 }
 
-const ProductDetailScreen: React.FC<ProductDetailScreenProps> = observer(({ viewModel, cartViewModel, route }) => {
+const ProductDetailScreen: React.FC<ProductDetailScreenProps> = observer(({ viewModel, route }) => {
     const { productId } = route.params;
 
     useEffect(() => {
@@ -31,20 +29,24 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = observer(({ view
     }    return (
         <ScrollView style={styles.container}>
             <View style={styles.content}>
-                <Text style={styles.name}>{viewModel.product.name}</Text>
-                <Text style={styles.price}>${viewModel.product.price.toFixed(2)}</Text>
-                <Text style={styles.quantity}>Available: {viewModel.product.quantity}</Text>
-                <Text style={styles.description}>{viewModel.product.description}</Text>                
-                <TouchableOpacity 
-                    style={styles.addToCartButton}
-                    onPress={() => {
-                        if (viewModel.product) {
-                            cartViewModel.addToCart(viewModel.product.id, 1);
-                        }
-                    }}
-                >
-                    <Text style={styles.addToCartButtonText}>Add to Cart</Text>
-                </TouchableOpacity>
+                <View style={styles.header}>
+                    <Text style={styles.name}>{viewModel.product.name}</Text>
+                    <Text style={styles.price}>${viewModel.product.price.toFixed(2)}</Text>
+                </View>
+                <View style={styles.stockBadge}>
+                    <Text style={[
+                        styles.stockText,
+                        { color: viewModel.product.quantity > 0 ? '#2e7d32' : '#d32f2f' }
+                    ]}>
+                        {viewModel.product.quantity > 0 
+                            ? `${viewModel.product.quantity} units available`
+                            : 'Out of stock'}
+                    </Text>
+                </View>
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Description</Text>
+                    <Text style={styles.description}>{viewModel.product.description}</Text>
+                </View>
             </View>
         </ScrollView>
     );
@@ -53,38 +55,82 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = observer(({ view
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#f8f9fa',
     },
     content: {
         padding: 16,
     },
+    header: {
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 12,
+        marginBottom: 16,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+    },
     name: {
-        fontSize: 24,
+        fontSize: 28,
         fontWeight: 'bold',
-        marginBottom: 8,
+        color: '#1a1a1a',
+        marginBottom: 12,
     },
     price: {
-        fontSize: 20,
+        fontSize: 24,
         color: '#2e7d32',
-        marginBottom: 16,
+        fontWeight: '700',
     },
-    quantity: {
-        fontSize: 16,
-        color: '#666',
+    stockBadge: {
+        backgroundColor: 'white',
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        borderRadius: 8,
         marginBottom: 16,
+        elevation: 1,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
+    },
+    stockText: {
+        fontSize: 16,
+        fontWeight: '500',
+    },
+    section: {
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 12,
+        marginBottom: 16,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+    },
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: '#1a1a1a',
+        marginBottom: 12,
     },
     description: {
         fontSize: 16,
         lineHeight: 24,
-        color: '#333',
-        marginBottom: 24,
+        color: '#4a4a4a',
     },
     addToCartButton: {
         backgroundColor: '#2e7d32',
         padding: 16,
-        borderRadius: 8,
+        borderRadius: 12,
         alignItems: 'center',
-        marginTop: 16,
+        marginTop: 8,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
     },
     addToCartButtonText: {
         color: 'white',
@@ -94,11 +140,14 @@ const styles = StyleSheet.create({
     loadingText: {
         textAlign: 'center',
         padding: 16,
+        color: '#666',
+        fontSize: 16,
     },
     errorText: {
         textAlign: 'center',
         padding: 16,
-        color: 'red',
+        color: '#d32f2f',
+        fontSize: 16,
     },
 });
 

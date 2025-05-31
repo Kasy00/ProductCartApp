@@ -11,25 +11,63 @@ interface ProductListItemProps {
 
 const ProductListItem: React.FC<ProductListItemProps> = ({ product, onPress }) => (
     <TouchableOpacity onPress={() => onPress(product)} style={styles.productItem}>
-        <Text style={styles.productName}>{product.name || 'Unnamed Product'}</Text>
-        <Text style={styles.productPrice}>${(product.price || 0).toFixed(2)}</Text>
+        <View style={styles.productContent}>
+            <View style={styles.mainInfo}>
+                <Text style={styles.productName}>{product.name || 'Unnamed Product'}</Text>
+            </View>
+            <View style={styles.priceContainer}>
+                <Text style={styles.productPrice}>${(product.price || 0).toFixed(2)}</Text>
+                <Text style={styles.stockInfo}>
+                    {product.isAvailable  ? `In stock` : 'Out of stock'}
+                </Text>
+            </View>
+        </View>
     </TouchableOpacity>
 );
 
 const styles = StyleSheet.create({
     productItem: {
-        padding: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: '#eee',
+        margin: 8,
         backgroundColor: 'white',
+        borderRadius: 12,
+        elevation: 3,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+    },
+    productContent: {
+        padding: 16,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    mainInfo: {
+        flex: 1,
+        marginRight: 16,
     },
     productName: {
         fontSize: 16,
-        fontWeight: '500',
+        fontWeight: '600',
+        color: '#1a1a1a',
+        marginBottom: 4,
     },
-    productPrice: {
+    productDescription: {
         fontSize: 14,
         color: '#666',
+        lineHeight: 20,
+    },
+    priceContainer: {
+        alignItems: 'flex-end',
+        justifyContent: 'space-between',
+    },
+    productPrice: {
+        fontSize: 18,
+        fontWeight: '700',
+        color: '#2e7d32',
+    },
+    stockInfo: {
+        fontSize: 12,
+        color: '#888',
         marginTop: 4,
     },
     container: {
